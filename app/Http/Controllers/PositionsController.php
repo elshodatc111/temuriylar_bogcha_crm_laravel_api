@@ -62,16 +62,6 @@ class PositionsController extends Controller{
         $validate = $request->validate([
             'id'  => 'required|integer|min:1|max:1000',
         ]);
-
-        $test = [
-        'php_time'     => date('Y-m-d H:i:s'),
-        'laravel_time' => now()->toDateTimeString(),
-        'mysql_time'   => DB::select("SELECT NOW() as db_time")[0]->db_time,
-        'carbon_now'   => \Carbon\Carbon::now()->format('Y-m-d H:i:s'),
-        'app_timezone' => config('app.timezone'),
-        'php_timezone' => date_default_timezone_get(),
-    ];
-    dd($test);
         $room = Rooms::find($request->id);
         $room->status = false;
         $room->delete_user_id = auth()->user()->id;
