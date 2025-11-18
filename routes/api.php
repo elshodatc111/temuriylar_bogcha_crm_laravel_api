@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Api\{AuthController,EmploesController,RoomController,SettingController};
+use App\Http\Controllers\Api\{AuthController,EmploesController,RoomController,SettingController,ChildController};
 
 // Auth
 Route::post('/login', [AuthController::class, 'login']);
@@ -27,4 +27,17 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/setting-sms-update', [SettingController::class, 'sms_update']);
     Route::get('/setting-paymart', [SettingController::class, 'paymart']);
     Route::post('/setting-paymart-update', [SettingController::class, 'paymart_update']);
+});
+Route::middleware('auth:sanctum')->group(function () {
+    Route::get('/child-all', [ChildController::class, 'child_all']);
+    Route::get('/child-debet', [ChildController::class, 'child_debet']);
+    Route::get('/child-end', [ChildController::class, 'child_end']);
+    Route::get('/child-active', [ChildController::class, 'child_active']);
+    Route::post('/child-create', [ChildController::class, 'create']);
+    Route::get('/child-show/{id}', [ChildController::class, 'show']);
+    Route::get('/child-all-paymart/{id}', [ChildController::class, 'all_paymart']);
+    Route::get('/child-all-paymarts', [ChildController::class, 'all_paymarts']);
+    Route::post('/child-create-document', [ChildController::class, 'create_document']);
+    Route::post('/child-create-paymart', [ChildController::class, 'create_paymart']);
+    Route::post('/child-create-qarindosh', [ChildController::class, 'create_qarindosh']);
 });
