@@ -10,7 +10,7 @@ return new class extends Migration{
             $table->id();
             $table->string('login')->nullable();
             $table->string('parol')->nullable();
-            $table->string('token')->nullable();
+            $table->text('token')->nullable();
             $table->text('token_data')->nullable();
             $table->boolean('create_child_status')->default(false);
             $table->text('create_child_text')->default("Yangi bola qabul qilinganda yuboriladigan sms.");
