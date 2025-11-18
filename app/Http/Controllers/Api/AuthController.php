@@ -128,6 +128,7 @@ class AuthController extends Controller{
             } else {}
         } catch (\Exception $e) {}
     }
+
     protected function changeToken($token){
         try {
             $response = Http::withHeaders([
@@ -153,6 +154,7 @@ class AuthController extends Controller{
             return false;
         }
     }
+
     public function checkToken(Request $request){
         $SettingSms = SettingSms::first();
         $login = $SettingSms->login;

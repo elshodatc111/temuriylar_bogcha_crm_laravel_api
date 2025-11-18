@@ -31,13 +31,13 @@ class User extends Authenticatable{
         'tkun'   => 'date',
         'status' => 'boolean',
     ];
-    public function position(){
-        return $this->belongsTo(Position::class);
-    }
-    public function rooms(){
-        return $this->hasMany(Room::class, 'user_id');
-    }
-    public function deletedRooms(){
-        return $this->hasMany(Room::class, 'delete_user_id');
-    }
+    public function position(){return $this->belongsTo(Position::class);}
+    public function rooms(){return $this->hasMany(Room::class, 'user_id');}
+    public function deletedRooms(){return $this->hasMany(Room::class, 'delete_user_id');}
+    public function children(){return $this->hasMany(Child::class);}
+    public function childRelatives(){return $this->hasMany(ChildRelative::class);}
+    public function childDocuments(){return $this->hasMany(ChildDocument::class);}
+    public function childPaymarts(){return $this->hasMany(ChildPaymart::class);}
+
+
 }
