@@ -38,6 +38,12 @@ class User extends Authenticatable{
     public function childRelatives(){return $this->hasMany(ChildRelative::class);}
     public function childDocuments(){return $this->hasMany(ChildDocument::class);}
     public function childPaymarts(){return $this->hasMany(ChildPaymart::class);}
-
+    public function kassaHistories(){return $this->hasMany(KassaHistory::class);}
+    public function userPaymarts(){return $this->hasMany(UserPaymart::class);}
+    public function balansHistories(){return $this->hasMany(BalansHistory::class);}
+    public function adminKassaHistories(){return $this->hasMany(KassaHistory::class, 'admin_id');}
+    public function adminUserPaymarts(){return $this->hasMany(UserPaymart::class, 'admin_id');}
+    public function adminBalansHistories(){return $this->hasMany(BalansHistory::class, 'admin_id');}
+    public function teacherKassaHistories(){return $this->hasMany(KassaHistory::class, 'teacher_id');}
 
 }

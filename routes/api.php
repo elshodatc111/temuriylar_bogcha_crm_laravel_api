@@ -1,7 +1,14 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Api\{AuthController,EmploesController,RoomController,SettingController,ChildController};
+use App\Http\Controllers\Api\{
+    AuthController,
+    EmploesController,
+    RoomController,
+    SettingController,
+    ChildController,
+    KassaController,
+};
 
 // Auth
 Route::post('/login', [AuthController::class, 'login']);
@@ -40,4 +47,10 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/child-create-document', [ChildController::class, 'create_document']);
     Route::post('/child-create-paymart', [ChildController::class, 'create_paymart']);
     Route::post('/child-create-qarindosh', [ChildController::class, 'create_qarindosh']);
+});
+Route::middleware('auth:sanctum')->group(function () {
+    Route::get('/kassa-get', [KassaController::class, 'kassa']);
+    Route::post('/kassa-success-paymart', [KassaController::class, 'success_paymart']);
+    Route::post('/kassa-chiqim', [KassaController::class, 'chiqim_post']);
+    Route::post('/kassa-chiqim-success', [KassaController::class, 'success_chiqim']);
 });
