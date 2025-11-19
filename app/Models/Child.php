@@ -28,16 +28,10 @@ class Child extends Model{
         'passport'     => 'boolean',
         'gepatet'      => 'boolean',
     ];
-    public function user(){
-        return $this->belongsTo(User::class);
-    }
-    public function relatives(){
-        return $this->hasMany(ChildRelative::class);
-    }
-    public function documents(){
-        return $this->hasMany(ChildDocument::class);
-    }
-    public function paymarts(){
-        return $this->hasMany(ChildPaymart::class);
-    }
+    public function user(){return $this->belongsTo(User::class);}
+    public function relatives(){return $this->hasMany(ChildRelative::class);}
+    public function documents(){return $this->hasMany(ChildDocument::class);}
+    public function paymarts(){return $this->hasMany(ChildPaymart::class);}
+    public function groupChildren(){return $this->hasMany(GroupChild::class);}
+    public function davomads(){return $this->hasMany(GroupDavomad::class);}
 }

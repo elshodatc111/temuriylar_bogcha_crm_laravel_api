@@ -25,4 +25,8 @@ class Rooms extends Model{
         return $this->belongsTo(User::class, 'delete_user_id');
     }
 
+    public function groups(){
+        return $this->hasMany(Group::class);
+    }
+
 }

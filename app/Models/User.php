@@ -45,5 +45,8 @@ class User extends Authenticatable{
     public function adminUserPaymarts(){return $this->hasMany(UserPaymart::class, 'admin_id');}
     public function adminBalansHistories(){return $this->hasMany(BalansHistory::class, 'admin_id');}
     public function teacherKassaHistories(){return $this->hasMany(KassaHistory::class, 'teacher_id');}
+    public function createdGroups(){return $this->hasMany(Group::class);}
+    public function tarbiyachiGroups(){return $this->hasMany(GroupTarbiyachi::class);}
+    public function davomads(){return $this->hasMany(GroupDavomad::class);}
 
 }
