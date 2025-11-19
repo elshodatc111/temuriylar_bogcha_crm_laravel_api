@@ -58,7 +58,6 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/kassa-ish-haqi-success', [KassaController::class, 'success_ishHaqi']);
     Route::post('/kassa-ish-haqi-cancel', [KassaController::class, 'cancel_ishHaqi']);
 });
-
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/group-active', [GroupsController::class, 'indexAktive']);
     Route::get('/group-end', [GroupsController::class, 'indexEnd']);

@@ -18,9 +18,11 @@ use App\Models\SettingPaymart;
 use Carbon\Carbon;
 
 class GroupsController extends Controller{
+
     protected function calculateAge($birthDate){
         return Carbon::parse($birthDate)->age;
     }
+
     public function indexAktive(){
         $Group = Group::where('status',1)->get();
         $res = [];
@@ -39,6 +41,7 @@ class GroupsController extends Controller{
             'data' => $res,
         ], 200);
     }
+
     public function indexEnd(){
         $Group = Group::where('status',0)->get();
         $res = [];
@@ -58,9 +61,43 @@ class GroupsController extends Controller{
             'data' => $res,
         ], 200);
     }
-    public function show($id){
-
+    protected function groupAbout($id){
+        $group = Group::find($id);
+        $active_child = count(GroupChild::where('group_id',$id)->where('status',true)->get());
+        $active_end = count(GroupChild::where('group_id',$id)->where('status',false)->get());
+        $child = GroupChild::where('group_id',$id)->where('status',true)->get();
+        $debet = 0;
+        $debet_count = 0;
+        foreach ($child as $key => $value) {
+            $chil_item = Child::find($value->child_id);
+            if($chil_item->balans<0){
+                $debet_count = $debet_count + 1;
+                $debet = $debet + $chil_item['balans'];
+            }
+        }
+        $tarbiyachi_count = count(GroupTarbiyachi::where('group_id',$id)->where('status',true)->get());
+        return [
+            'group_id' => $group->id,
+            'group_name' => $group->name,
+            'group_room' => Rooms::find($group->room_id)->name,
+            'group_price' => $group->price,
+            'active_child' => $active_child,
+            'end_child' => $active_end,
+            'group_debet_count' => $debet_count,
+            'group_debet' => $debet,
+            'group_tarbiyachilar' => $tarbiyachi_count,
+            'group_create' => Carbon::parse($group->created_at)->format('Y-m-d h:i'),
+            'group_create_user' => User::find($group->user_id)->name,
+        ];
     }
+    public function show($id){
+        return response()->json([
+            'status' => true,
+            'message' => "Guruh haqida",
+            'group' => $this->groupAbout($id),
+        ], 200);
+    }
+
     public function getRoom(){
         $rooms = Rooms::where('status',1)->get();
         $res = [];
@@ -80,6 +117,7 @@ class GroupsController extends Controller{
             'data' => $res,
         ], 200);
     }
+
     public function create(Request $request){
         $data = $request->validate([
             'room_id' => ['required','integer','exists:rooms,id'],
@@ -106,6 +144,7 @@ class GroupsController extends Controller{
             'data' => $group,
         ], 200);
     }
+
     public function showGroup($id){
         $value = Group::find($id);
         $res = [];
@@ -135,6 +174,7 @@ class GroupsController extends Controller{
             'room' => $room,
         ], 200);
     }
+
     public function update(Request $request){
         $data = $request->validate([
             'id' => ['required','integer','exists:groups,id'],
@@ -160,6 +200,7 @@ class GroupsController extends Controller{
             'data' => $Group,
         ], 200);
     }
+
     public function getNewHodim(){
         $users = User::whereHas('position', function ($q) {$q->where('category', 'Education-Care');})->where('status', true)->get();
         $res = [];
@@ -175,6 +216,7 @@ class GroupsController extends Controller{
             'data' => $res,
         ], 200);
     }
+
     public function createHodim(Request $request){
         $data = $request->validate([
             'user_id' => ['required','integer','exists:users,id'],
@@ -202,6 +244,7 @@ class GroupsController extends Controller{
             'data' => $res,
         ], 200);
     }
+
     public function getAktiveHodim($id){
         $GroupTarbiyachi = GroupTarbiyachi::where('group_id',$id)->where('status',true)->get();
         $res = [];
@@ -217,6 +260,7 @@ class GroupsController extends Controller{
             'data' => $res,
         ], 200);
     }
+
     public function deleteHodim(Request $request){
         $data = $request->validate([
             'user_id' => ['required','integer','exists:group_tarbiyachis,user_id'],
@@ -241,6 +285,7 @@ class GroupsController extends Controller{
             'data' => $GroupTarbiyachi,
         ], 200);
     }
+
     public function getNewChild(){
         $child = Child::where('status',false)->get();
         $res = [];
@@ -257,6 +302,7 @@ class GroupsController extends Controller{
             'data' => $res,
         ], 200);
     }
+
     public function createChild(Request $request){
         $data = $request->validate([
             'child_id' => ['required','integer','exists:children,id'],
@@ -294,6 +340,7 @@ class GroupsController extends Controller{
             'data' => $GroupChild,
         ], 200);
     }
+
     public function activeChild($id){
         $group_id = $id;
         $GroupChild = GroupChild::where('status',true)->where('group_id',$group_id)->get();
@@ -314,6 +361,7 @@ class GroupsController extends Controller{
             'data' => $res,
         ], 200);
     }
+
     public function deleteChild(Request $request){
         $data = $request->validate([
             'child_id' => ['required','integer','exists:children,id'],
@@ -338,6 +386,7 @@ class GroupsController extends Controller{
             'data' => $GroupChild1,
         ], 200);
     }
+
     public function createDavomat(Request $request){
         $data = $request->validate([
             'group_id' => ['required','exists:groups,id'],
