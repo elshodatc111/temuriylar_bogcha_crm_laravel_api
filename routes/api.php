@@ -8,6 +8,7 @@ use App\Http\Controllers\Api\{
     SettingController,
     ChildController,
     KassaController,
+    GroupsController,
 };
 Route::post('/login', [AuthController::class, 'login']);
 Route::middleware('auth:sanctum')->group(function () {
@@ -56,4 +57,23 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/kassa-chiqim-success', [KassaController::class, 'success_chiqim']);
     Route::post('/kassa-ish-haqi-success', [KassaController::class, 'success_ishHaqi']);
     Route::post('/kassa-ish-haqi-cancel', [KassaController::class, 'cancel_ishHaqi']);
+});
+
+Route::middleware('auth:sanctum')->group(function () {
+    Route::get('/group-active', [GroupsController::class, 'indexAktive']);
+    Route::get('/group-end', [GroupsController::class, 'indexEnd']);
+    Route::get('/group-show/{id}', [GroupsController::class, 'show']);
+    Route::get('/group-get-room', [GroupsController::class, 'getRoom']);
+    Route::post('/group-create', [GroupsController::class, 'create']);
+    Route::get('/group-show-update/{id}', [GroupsController::class, 'showGroup']);
+    Route::post('/group-update', [GroupsController::class, 'update']);
+    Route::get('/group-hodim-new', [GroupsController::class, 'getNewHodim']);
+    Route::post('/group-add-hodim', [GroupsController::class, 'createHodim']);
+    Route::get('/group-hodim-show/{id}', [GroupsController::class, 'getAktiveHodim']);
+    Route::post('/group-end-hodim', [GroupsController::class, 'deleteHodim']);
+    Route::get('/group-new-child', [GroupsController::class, 'getNewChild']);
+    Route::post('/group-add-child', [GroupsController::class, 'createChild']);
+    Route::get('/group-active-child/{id}', [GroupsController::class, 'activeChild']);
+    Route::post('/group-end-child', [GroupsController::class, 'deleteChild']);
+    Route::post('/group-create-davomad', [GroupsController::class, 'createDavomat']);
 });
