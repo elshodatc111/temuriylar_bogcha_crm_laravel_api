@@ -9,8 +9,6 @@ use App\Http\Controllers\Api\{
     ChildController,
     KassaController,
 };
-
-// Auth
 Route::post('/login', [AuthController::class, 'login']);
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/profile', [AuthController::class, 'profile']);
@@ -28,6 +26,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/emploes-end', [EmploesController::class, 'index_end']);
     Route::get('/get-position', [EmploesController::class, 'get_position']);
     Route::post('/emploes-create', [EmploesController::class, 'create']);
+    Route::post('/emploes-paymart', [EmploesController::class, 'create_paymart']);
+    Route::post('/emploes-paymart-meneger', [EmploesController::class, 'create_paymart_meneger']);
 });
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/setting-sms', [SettingController::class, 'sms']);
@@ -52,5 +52,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/kassa-get', [KassaController::class, 'kassa']);
     Route::post('/kassa-success-paymart', [KassaController::class, 'success_paymart']);
     Route::post('/kassa-chiqim', [KassaController::class, 'chiqim_post']);
+    Route::post('/kassa-chiqim-cancel', [KassaController::class, 'cancel_chiqim']);
     Route::post('/kassa-chiqim-success', [KassaController::class, 'success_chiqim']);
+    Route::post('/kassa-ish-haqi-success', [KassaController::class, 'success_ishHaqi']);
+    Route::post('/kassa-ish-haqi-cancel', [KassaController::class, 'cancel_ishHaqi']);
 });

@@ -9,7 +9,7 @@ return new class extends Migration{
     public function up(): void{
         Schema::create('kassa_histories', function (Blueprint $table) {
             $table->id();
-            $table->enum('type', ['chiqim','xarajat','ish_haqi'])->default('chiqim');
+            $table->enum('type', ['chiqim','xarajat','ish_haqi','qaytar_naqt','qaytar_card','qaytar_shot','chegirma'])->default('chiqim');
             $table->integer('amount')->default(0);
             $table->foreignId('user_id')->constrained()->cascadeOnUpdate()->cascadeOnDelete();
             $table->foreignId('admin_id')->nullable()->constrained('users')->nullOnDelete()->cascadeOnUpdate();

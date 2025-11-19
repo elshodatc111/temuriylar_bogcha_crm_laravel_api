@@ -10,12 +10,17 @@ return new class extends Migration{
             $table->id();
             $table->enum('type', ['naqt','card','shot'])->default('naqt');
             $table->enum('status', [
-                                'kassa_chiqim',
-                                'kassa_xarajat',
+                                'kassa_chiqim', // +
+                                'kassa_xarajat', // +
                                 'kassa_ish_haqi',
-                                'ish_haqi_naqt',
-                                'ish_haqi_card',
-                                'ish_haqi_shot',
+                                'tulov_card', // +
+                                'tulov_shot', // +
+                                'qaytar_naqt',
+                                'qaytar_card',
+                                'qaytar_shot',
+                                'ish_haqi_naqt', // +
+                                'ish_haqi_card', // +
+                                'ish_haqi_shot', // +
                                 'xarajat_naqt',
                                 'xarajat_card',
                                 'xarajat_shot',
@@ -24,7 +29,7 @@ return new class extends Migration{
                                 'exson_shot',
                                 'daromad_naqt',
                                 'daromad_card',
-                                'daromad_shot'
+                                'daromad_shot',
                             ]);
             $table->integer('amount')->default(0);
             $table->text('about')->nullable();
