@@ -90,11 +90,132 @@ class GroupsController extends Controller{
             'group_create_user' => User::find($group->user_id)->name,
         ];
     }
+    protected function davomadJoriyTable($id){
+        $dates = [];
+        $start = now()->startOfMonth();
+        $end = now();
+        $i = 0;
+        for ($date = $start->copy(); $date->lte($end); $date->addDay()) {
+            if ($date->weekday() >= 1 && $date->weekday() <= 5) {
+                $dates[$i]['date'] = $date->format('Y-m-d');
+                $dates[$i]['date2'] = $date->format('M-d');
+                $i++;
+            }
+        }
+        $GroupChildAktive = GroupChild::where('group_id',$id)->where('status',true)->get();
+        $res = [];
+        $YMD = [];
+        foreach ($GroupChildAktive as $key => $value) {
+            $child_id = $value->child_id;
+            $group_id = $id;
+            $res['user'][$key]['name'] = Child::find($value->child_id)->name;
+            $status = [];
+            foreach ($dates as $key2 => $value2) {
+                $data = $value2['date'];
+                $GroupDavomad = GroupDavomad::where('child_id',$child_id)->where('group_id',$group_id)->where('data',$data)->first();
+                if($GroupDavomad){
+                    $statu = $GroupDavomad->status;
+                }else{
+                    $statu = 'false';
+                }
+                $status[$key2] = $statu;
+                $YMD[$key2] = $value2['date2'];
+            }
+            $res['user'][$key]['status'] = $status;
+        }
+        $res['data'] = $YMD;
+        return $res;
+    }
+    protected function deleteChildArxiv($id){
+        $GroupChild = GroupChild::where('group_id',$id)->where('status',false)->where('end_data','>=',date("Y-m").'-01')->where('end_data','<=',date("Y-m").'-31')->get();
+        $res = [];
+        foreach ($GroupChild as $key => $value) {
+            $res[$key]['child_id'] = $value->child_id;
+            $res[$key]['child'] = Child::find($value->child_id)->name;
+            $res[$key]['child_balans'] = Child::find($value->child_id)->balans;
+            $res[$key]['start_data'] = Carbon::parse($value->start_data)->format('Y-m-d');
+            $res[$key]['start_user'] = User::find($value->start_user_id)->name;
+            $res[$key]['start_about'] = $value->start_about;
+            $res[$key]['end_data'] = Carbon::parse($value->end_data)->format('Y-m-d');
+            $res[$key]['end_user'] = User::find($value->end_user_id)->name;
+            $res[$key]['end_about'] = $value->end_about;
+        }
+        return $res;
+    }
+    protected function aktiveChildArxiv($id){
+        $GroupChild = GroupChild::where('group_id',$id)->where('status',true)->get();
+        $res = [];
+        foreach ($GroupChild as $key => $value) {
+            $res[$key]['child_id'] = $value->child_id;
+            $res[$key]['child'] = Child::find($value->child_id)->name;
+            $res[$key]['child_balans'] = Child::find($value->child_id)->balans;
+            $res[$key]['start_data'] = Carbon::parse($value->start_data)->format('Y-m-d');
+            $res[$key]['start_user'] = User::find($value->start_user_id)->name;
+            $res[$key]['start_about'] = $value->start_about;
+        }
+        return $res;
+    }
+    protected function aktiveTarbiyachilar($id){
+        $GroupTarbiyachi = GroupTarbiyachi::where('group_id',$id)->where('status',true)->get();
+        $res = [];
+        foreach ($GroupTarbiyachi as $key => $value) {
+            $res['user_id'] = $value['user_id'];
+            $res['user'] = User::find($value['user_id'])->name;
+            $res['lovozim'] = Position::find(User::find($value['user_id'])->position_id)->name;
+            $res['start_data'] = $value['start_data'];
+            $res['start_user_id'] = User::find($value['start_user_id'])->id;
+            $res['start_about'] = $value['start_about'];
+        }
+        return $res;
+    }
+    protected function davomadOtganTable($id){
+        $dates = [];
+        $lastMonthYm = Carbon::now()->subMonth()->format('Y-m');
+        $start = Carbon::now()->subMonth()->startOfMonth();
+        $end = Carbon::now()->subMonth()->endOfMonth();
+        $i = 0;
+        for ($date = $start->copy(); $date->lte($end); $date->addDay()) {
+            if ($date->weekday() >= 1 && $date->weekday() <= 5) {
+                $dates[$i]['date'] = $date->format('Y-m-d');
+                $dates[$i]['date2'] = $date->format('M-d');
+                $i++;
+            }
+        }
+        $GroupChildAktive = GroupChild::where('group_id',$id)->where('status',true)->get();
+        $res = [];
+        $YMD = [];
+        foreach ($GroupChildAktive as $key => $value) {
+            $child_id = $value->child_id;
+            $group_id = $id;
+            $res['user'][$key]['name'] = Child::find($value->child_id)->name;
+            $status = [];
+            foreach ($dates as $key2 => $value2) {
+                $data = $value2['date'];
+                $GroupDavomad = GroupDavomad::where('child_id',$child_id)->where('group_id',$group_id)->where('data',$data)->first();
+                if($GroupDavomad){
+                    $statu = $GroupDavomad->status;
+                }else{
+                    $statu = 'false';
+                }
+                $status[$key2] = $statu;
+                $YMD[$key2] = $value2['date2'];
+            }
+            $res['user'][$key]['status'] = $status;
+        }
+        $res['data'] = $YMD;
+        return $res;
+    }
+    
     public function show($id){
         return response()->json([
             'status' => true,
             'message' => "Guruh haqida",
             'group' => $this->groupAbout($id),
+            'davomad' => $this->davomadJoriyTable($id),
+            'oldingi_davomad' => $this->davomadOtganTable($id),
+            'delete_child' => $this->deleteChildArxiv($id),
+            'active_child' => $this->aktiveChildArxiv($id),
+            'tarbiyachilar' => $this->aktiveTarbiyachilar($id),
         ], 200);
     }
 
