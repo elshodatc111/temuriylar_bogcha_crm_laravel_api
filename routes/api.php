@@ -29,6 +29,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/emploes-create', [EmploesController::class, 'create']);
     Route::post('/emploes-paymart', [EmploesController::class, 'create_paymart']);
     Route::post('/emploes-paymart-meneger', [EmploesController::class, 'create_paymart_meneger']);
+    Route::get('/emploes-show/{id}', [EmploesController::class, 'show']);
+    Route::get('/emploes-davomad-show', [EmploesController::class, 'davomad_emploes']);
+    Route::post('/emploes-davomad', [EmploesController::class, 'create_davomad']);
 });
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/setting-sms', [SettingController::class, 'sms']);
