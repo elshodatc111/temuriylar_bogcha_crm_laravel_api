@@ -9,6 +9,9 @@ use App\Models\User;
 use App\Models\ChildRelative;
 use App\Models\ChildDocument;
 use App\Models\ChildPaymart;
+use App\Models\Group;
+use App\Models\GroupChild;
+use App\Models\GroupDavomad;
 use App\Models\Kassa;
 use Carbon\Carbon;
 use Intervention\Image\Laravel\Facades\Image;
@@ -122,9 +125,130 @@ class ChildController extends Controller{
             'data'    => $child,
         ], 200);
     }
-
+    protected function childAbout($id){
+        $child = Child::find($id);
+        return [
+            'id' => $id,
+            'name' => $child->name,
+            'seria' => $child->seria,
+            'tkun' => Carbon::parse($child->tkun)->format('Y-m-d'),
+            'status' => $child->status,
+            'balans' => $child->balans,
+            'balans_data' => $child->balans_data,
+            'guvohnoma' => $child->guvohnoma,
+            'passport' => $child->passport,
+            'gepatet' => $child->gepatet,
+            'user_id' => User::find($child->user_id)->name,
+            'registr' => Carbon::parse($child->created_at)->format('Y-m-d h:i')
+        ];
+    }
+    protected function childGroup($id){
+        $GroupChild = GroupChild::where('child_id',$id)->orderby('id','desc')->get();
+        $res = [];
+        foreach ($GroupChild as $key => $value) {
+            $res[$key]['group_id'] = $value->group_id;
+            $res[$key]['group_name'] = Group::find($value->group_id)->name;
+            $res[$key]['status'] = $value->status;
+            $res[$key]['start_data'] = Carbon::parse($value->start_data)->format('Y-m-d');
+            $res[$key]['start_user_id'] = User::find($value->start_user_id)->name;
+            $res[$key]['start_about'] = $value->group_id;
+            $res[$key]['end_data'] = $value->status==false?Carbon::parse($value->end_data)->format('Y-m-d'):"";
+            $res[$key]['end_user_id'] = $value->status==false?User::find($value->end_user_id)->name:"";
+            $res[$key]['end_about'] = $value->status==false?$value->end_about:"";
+        }
+        return $res;
+    }
+    protected function childDavomad($id){
+        $GroupDavomad = GroupDavomad::where('child_id',$id)->orderBy('id','desc')->get();
+        $res = [];
+        foreach ($GroupDavomad as $key => $value) {
+            $res[$key]['group_id'] = $value->group_id;
+            $res[$key]['group'] = Group::find($value->group_id)->name;
+            $res[$key]['data'] = Carbon::parse($value->data)->format('Y-m-d');
+            $res[$key]['status'] = $value->status;
+            $res[$key]['tarbiyachi'] = User::find($value->user_id)->name;
+        }
+        return $res;
+    }
     public function show($id){
+        return response()->json([
+            'message' => 'Bola haqida.',
+            'about'    => $this->childAbout($id),
+            'group'    => $this->childGroup($id),
+            'davomad'    => $this->childDavomad($id),
+        ], 200);
+    }
 
+    public function showDocument($id){
+        $ChildDocument = ChildDocument::where('child_id',$id)->get();
+        $res = [];
+        foreach ($ChildDocument as $key => $value) {
+            $res['id'] = $value->id;
+            $res['type'] = $value->type;
+            $res['url'] = $value->url;
+            $res['user_id'] = User::find($value->user_id)->name;
+            $res['created_at'] = Carbon::parse($value->created_at)->format('Y-m-d h:i');
+        }
+        return response()->json([
+            'message' => 'Bola hujjatlari.',
+            'data'    => $res,
+        ], 200);
+    }
+
+    public function showDocumentDelete(Request $request){
+        $data = $request->validate([
+            'id' => ['required', 'integer', 'exists:child_documents,id'],
+        ]);
+        $ChildDocument = ChildDocument::find($data['id']);
+        $type = $ChildDocument->type;
+        $child_id = $ChildDocument->child_id;
+        $check = count(ChildDocument::where('child_id',$child_id)->where('type',$type)->get());
+        if($check==1){
+            $child = Child::find($child_id);
+            if($type=='passport'){
+                $child->passport = 0;
+            }elseif($type=='gepatet'){
+                $child->gepatet = 0;
+            }else{
+                $child->guvohnoma = 0;
+            }
+            $child->save();
+        }
+        $ChildDocument->delete();
+        return response()->json([
+            'status' => true,
+            'message' => 'Bola hujjati o\'chirildi.',
+        ], 200);
+    }
+
+    public function showQarindosh($id){
+        $ChildRelative = ChildRelative::where('child_id',$id)->get();
+        $res = [];
+        foreach ($ChildRelative as $key => $value) {
+            $res['id'] = $value->id;
+            $res['name'] = $value->name;
+            $res['phone'] = $value->phone;
+            $res['address'] = $value->address;
+            $res['about'] = $value->about;
+            $res['user_id'] = User::find($value->user_id)->name;
+            $res['created_at'] = Carbon::parse($value->created_at)->format('Y-m-d h:i');
+        }
+        return response()->json([
+            'message' => 'Bola Qarindoshlari.',
+            'data'    => $res,
+        ], 200);
+    }
+
+    public function showQarindoshDelete(Request $request){
+        $data = $request->validate([
+            'id' => ['required', 'integer', 'exists:child_relatives,id'],
+        ]);
+        $ChildRelative = ChildRelative::find($data['id']);
+        $ChildRelative->delete();
+        return response()->json([
+            'status' => true,
+            'message' => 'Bola qarindoshi o\'chirildi.',
+        ], 200);
     }
 
     public function all_paymart($id){

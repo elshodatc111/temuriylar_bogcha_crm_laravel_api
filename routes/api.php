@@ -43,6 +43,10 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/child-active', [ChildController::class, 'child_active']);
     Route::post('/child-create', [ChildController::class, 'create']);
     Route::get('/child-show/{id}', [ChildController::class, 'show']);
+    Route::get('/child-show-document/{id}', [ChildController::class, 'showDocument']);
+    Route::post('/child-show-document-delete', [ChildController::class, 'showDocumentDelete']);
+    Route::get('/child-show-qarindosh/{id}', [ChildController::class, 'showQarindosh']);
+    Route::post('/child-show-qarindosh-delete', [ChildController::class, 'showQarindoshDelete']);
     Route::get('/child-all-paymart/{id}', [ChildController::class, 'all_paymart']);
     Route::get('/child-all-paymarts', [ChildController::class, 'all_paymarts']);
     Route::post('/child-create-document', [ChildController::class, 'create_document']);
