@@ -12,6 +12,7 @@ use App\Models\Position;
 use App\Models\GroupTarbiyachi;
 use App\Models\GroupChild;
 use App\Models\GroupDavomad;
+use App\Models\ChildBalansHistory;
 use App\Models\UserPaymart;
 use App\Models\BalansHistory;
 use App\Models\SettingPaymart;
@@ -205,11 +206,36 @@ class GroupsController extends Controller{
         $res['data'] = $YMD;
         return $res;
     }
-    
+    protected function GrpupCreatePaymart($id){
+        $now = now()->startOfMonth()->format('Y-m-d');
+        $groupPrice = Group::find($id)->price;
+        $GroupChild = GroupChild::where('group_id',$id)->where('status',true)->get();
+        foreach ($GroupChild as $key => $value) {
+            $child_id = $value->child_id;
+            $childs = Child::where('id',$child_id)->where('balans_data','!=',$now)->first();
+            if($childs){
+                $childs->balans = $childs->balans - $groupPrice;
+                $childs->balans_data = $now;
+                $childs->save();
+                ChildBalansHistory::create([
+                    'child_id' =>$child_id,
+                    'group_id' =>$id,
+                    'amount' =>$groupPrice,
+                    'about' =>"Oylik to‘lov yechildi: ".$now,
+                ]);
+            }
+        }
+    }
+    protected function isWorkday(){
+        $date = now();
+        return $date->isWeekday();
+    }
     public function show($id){
+        $this->GrpupCreatePaymart($id);
         return response()->json([
             'status' => true,
             'message' => "Guruh haqida",
+            'davomad_kuni' => $this->isWorkday(),
             'group' => $this->groupAbout($id),
             'davomad' => $this->davomadJoriyTable($id),
             'oldingi_davomad' => $this->davomadOtganTable($id),

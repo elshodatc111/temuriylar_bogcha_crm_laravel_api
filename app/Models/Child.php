@@ -34,4 +34,5 @@ class Child extends Model{
     public function paymarts(){return $this->hasMany(ChildPaymart::class);}
     public function groupChildren(){return $this->hasMany(GroupChild::class);}
     public function davomads(){return $this->hasMany(GroupDavomad::class);}
+    public function balansHistories(){return $this->hasMany(ChildBalansHistory::class);}
 }

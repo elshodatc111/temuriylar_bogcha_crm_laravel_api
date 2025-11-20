@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Child;
 use App\Models\User;
+use App\Models\ChildBalansHistory;
 use App\Models\ChildRelative;
 use App\Models\ChildDocument;
 use App\Models\ChildPaymart;
@@ -170,11 +171,24 @@ class ChildController extends Controller{
         }
         return $res;
     }
+    protected function oylikTulovlar($id){
+        $ChildBalansHistory = ChildBalansHistory::where('child_id',$id)->orderby('id','desc')->get();
+        $res = [];
+        foreach ($ChildBalansHistory as $key => $value) {
+            $res[$key]['id'] = $value->id;
+            $res[$key]['group_id'] = Group::find($value->group_id)->name;
+            $res[$key]['amount'] = $value->amount;
+            $res[$key]['about'] = $value->about;
+            $res[$key]['created_at'] = Carbon::parse($value->created_at)->format('Y-m-d h:i');
+        }
+        return $res;
+    }
     public function show($id){
         return response()->json([
             'message' => 'Bola haqida.',
             'about'    => $this->childAbout($id),
             'group'    => $this->childGroup($id),
+            'group_tulovlari'    => $this->oylikTulovlar($id),
             'davomad'    => $this->childDavomad($id),
         ], 200);
     }

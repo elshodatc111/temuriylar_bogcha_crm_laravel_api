@@ -31,4 +31,7 @@ class Group extends Model{
     public function davomads(){
         return $this->hasMany(GroupDavomad::class);
     }
+    public function childBalansHistories(){
+        return $this->hasMany(ChildBalansHistory::class);
+    }
 }
