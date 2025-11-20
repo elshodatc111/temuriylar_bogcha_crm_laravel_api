@@ -32,6 +32,10 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/emploes-show/{id}', [EmploesController::class, 'show']);
     Route::get('/emploes-davomad-show', [EmploesController::class, 'davomad_emploes']);
     Route::post('/emploes-davomad', [EmploesController::class, 'create_davomad']);
+    Route::get('/emploes-update-show/{id}', [EmploesController::class, 'update_emploes_show']);
+    Route::post('/emploes-update', [EmploesController::class, 'update_emploes_post']);
+    Route::post('/emploes-update-status', [EmploesController::class, 'update_emploes_status']);
+    Route::post('/emploes-update-password', [EmploesController::class, 'updateHodimPassword']);
 });
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/setting-sms', [SettingController::class, 'sms']);

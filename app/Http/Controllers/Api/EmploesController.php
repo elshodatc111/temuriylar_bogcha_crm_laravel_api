@@ -339,4 +339,75 @@ class EmploesController extends Controller{
             'message' => "Davomad muvaffaqiyatli saqlandi",
         ], 200);
     }
+
+    public function update_emploes_show($id){
+        $user = User::find($id);
+        $lovozim = Position::where('id','!=',1)->select('id','name','category')->get();
+        return response()->json([
+            'status' => true,
+            'message' => "Hodim malumotlarini yangilash uchun get surovi",
+            'user' => [
+                'id' => $user->id,
+                'name' => $user->name,
+                'phone' => $user->phone,
+                'address' => $user->address,
+                'tkun' => Carbon::parse($user->tkun)->format('Y-m-d'),
+                'salary' => $user->salary,
+                'about' => $user->about,
+            ],
+            'lavozimlar' => $lovozim,
+        ], 200);
+    }
+    public function update_emploes_post(Request $request){
+        $data = $request->validate([
+            'id' => ['required','integer','exists:users,id'],
+            'position_id' => ['required','integer','exists:positions,id'],
+            'phone' => ['required','string'],
+            'name' => ['required','string'],
+            'salary' => ['required','integer'],
+            'address' => ['required','string'],
+            'tkun' => ['required','string'],
+            'about' => ['required','string'],
+        ]);
+        $user = User::find($data['id']);
+        $user->position_id = $data['position_id'];
+        $user->name = $data['name'];
+        $user->phone = $data['phone'];
+        $user->salary = $data['salary'];
+        $user->address = $data['address'];
+        $user->tkun = $data['tkun'];
+        $user->about = $data['about'];
+        $user->save();
+        return response()->json([
+            'status' => true,
+            'message' => "Hodim malumotlarini yangilandi",
+            'data' => $user,
+        ], 200);
+    }
+    public function update_emploes_status(Request $request){
+        $data = $request->validate([
+            'id' => ['required','integer','exists:users,id'],
+        ]);
+        $user = User::find($data['id']);
+        $user->status = $user->status==true?false:true;
+        $user->save();
+        return response()->json([
+            'status' => true,
+            'message' => "Hodim statusi yangilandi",
+            'data' => $user,
+        ], 200);
+    }
+
+    public function updateHodimPassword(Request $request){
+        $data = $request->validate([
+            'id' => ['required','integer','exists:users,id'],
+        ]);
+        $user = User::find($data['id']);
+        $user->password = Hash::make('password');
+        $user->save();
+        return response()->json([
+            'status' => true,
+            'message' => 'Parol muvaffaqiyatli yangilandi.',
+        ], 200);
+    }
 }
