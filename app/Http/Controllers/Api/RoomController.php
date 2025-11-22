@@ -12,7 +12,7 @@ use Carbon\Carbon;
 class RoomController extends Controller{
 
     public function index(){
-        $Rooms = Rooms::get();
+        $Rooms = Rooms::where('status',true)->get();
         $rooms = [];
         foreach ($Rooms as $key => $value) {
             $rooms[$key]['id'] = $value->id;

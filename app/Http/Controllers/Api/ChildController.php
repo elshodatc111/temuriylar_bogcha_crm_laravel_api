@@ -152,7 +152,7 @@ class ChildController extends Controller{
             $res[$key]['status'] = $value->status;
             $res[$key]['start_data'] = Carbon::parse($value->start_data)->format('Y-m-d');
             $res[$key]['start_user_id'] = User::find($value->start_user_id)->name;
-            $res[$key]['start_about'] = $value->group_id;
+            $res[$key]['start_about'] = $value->start_about;
             $res[$key]['end_data'] = $value->status==false?Carbon::parse($value->end_data)->format('Y-m-d'):"";
             $res[$key]['end_user_id'] = $value->status==false?User::find($value->end_user_id)->name:"";
             $res[$key]['end_about'] = $value->status==false?$value->end_about:"";
@@ -197,11 +197,11 @@ class ChildController extends Controller{
         $ChildDocument = ChildDocument::where('child_id',$id)->get();
         $res = [];
         foreach ($ChildDocument as $key => $value) {
-            $res['id'] = $value->id;
-            $res['type'] = $value->type;
-            $res['url'] = $value->url;
-            $res['user_id'] = User::find($value->user_id)->name;
-            $res['created_at'] = Carbon::parse($value->created_at)->format('Y-m-d h:i');
+            $res[$key]['id'] = $value->id;
+            $res[$key]['type'] = $value->type;
+            $res[$key]['url'] = $value->url;
+            $res[$key]['user_id'] = User::find($value->user_id)->name;
+            $res[$key]['created_at'] = Carbon::parse($value->created_at)->format('Y-m-d h:i');
         }
         return response()->json([
             'message' => 'Bola hujjatlari.',
@@ -239,13 +239,13 @@ class ChildController extends Controller{
         $ChildRelative = ChildRelative::where('child_id',$id)->get();
         $res = [];
         foreach ($ChildRelative as $key => $value) {
-            $res['id'] = $value->id;
-            $res['name'] = $value->name;
-            $res['phone'] = $value->phone;
-            $res['address'] = $value->address;
-            $res['about'] = $value->about;
-            $res['user_id'] = User::find($value->user_id)->name;
-            $res['created_at'] = Carbon::parse($value->created_at)->format('Y-m-d h:i');
+            $res[$key]['id'] = $value->id;
+            $res[$key]['name'] = $value->name;
+            $res[$key]['phone'] = $value->phone;
+            $res[$key]['address'] = $value->address;
+            $res[$key]['about'] = $value->about;
+            $res[$key]['user_id'] = User::find($value->user_id)->name;
+            $res[$key]['created_at'] = Carbon::parse($value->created_at)->format('Y-m-d h:i');
         }
         return response()->json([
             'message' => 'Bola Qarindoshlari.',
@@ -307,7 +307,7 @@ class ChildController extends Controller{
         $data = $request->validate([
             'child_id' => ['required', 'integer', 'exists:children,id'],
             'type'     => ['required', 'string', 'in:guvohnoma,passport,gepatet'],
-            'file'     => ['required','file','mimes:jpg,png','max:4096',],
+            'file'     => ['required','file','mimes:jpg,png','max:10240',],
         ], [
             'child_id.required' => 'Bola ID majburiy.',
             'child_id.exists'   => 'Bunday bola mavjud emas.',
@@ -315,7 +315,7 @@ class ChildController extends Controller{
             'type.in'           => 'Hujjat turi noto‘g‘ri (guvohnoma, passport yoki gepatet).',
             'file.required'     => 'Fayl yuklash majburiy.',
             'file.mimes'        => 'Fayl faqat jpg, png bo‘lishi mumkin.',
-            'file.max'          => 'Fayl hajmi 4MB dan katta bo‘lmasin.',
+            'file.max'          => 'Fayl hajmi 10MB dan katta bo‘lmasin.',
         ]);
         $file = $request->file('file');
         $extension = $file->getClientOriginalExtension();
@@ -326,7 +326,11 @@ class ChildController extends Controller{
         }
         $fileSizeKB = $file->getSize() / 1024;
         $quality = 100;
-        if ($fileSizeKB > 3000) {
+        if ($fileSizeKB > 8000) {
+            $quality = 10;
+        }elseif ($fileSizeKB > 6000) {
+            $quality = 20;
+        }elseif ($fileSizeKB > 3000) {
             $quality = 30;
         }elseif ($fileSizeKB > 2000) {
             $quality = 40;
