@@ -207,7 +207,7 @@ class GroupsController extends Controller{
         return $res;
     }
     protected function GrpupCreatePaymart($id){
-        $now = now()->startOfMonth()->format('Y-m-d');
+        $now = now()->startOfMonth()->format('Y-m');
         $groupPrice = Group::find($id)->price;
         $GroupChild = GroupChild::where('group_id',$id)->where('status',true)->get();
         foreach ($GroupChild as $key => $value) {
